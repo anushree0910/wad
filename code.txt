@@ -1,0 +1,1033 @@
+============================================================
+14. GRAPH REPRESENTATION
+===========================================================
+```
+#include <stdio.h>
+#define MAX 50
+
+int a[MAX][MAX], n;
+
+int valid(int v) {
+    return v >= 0 && v < n;
+}
+
+void create(void) {
+    int i, j, e, u, v;
+    printf("Vertices: ");
+    if (scanf("%d", &n) != 1 || n < 1 || n > MAX) {
+        n = 0;
+        printf("Invalid size\n");
+        return;
+    }
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            a[i][j] = 0;
+
+    printf("Edges: ");
+    if (scanf("%d", &e) != 1 || e < 0) {
+        printf("Invalid edge count\n");
+        return;
+    }
+    for (i = 0; i < e; i++) {
+        printf("u v: ");
+        if (scanf("%d%d", &u, &v) != 2) {
+            printf("Invalid input\n");
+            return;
+        }
+        if (valid(u) && valid(v))
+            a[u][v] = a[v][u] = 1;
+        else
+            printf("Invalid edge skipped\n");
+    }
+}
+
+void add(void) {
+    int u, v;
+    if (!n) {
+        printf("Create graph first\n");
+        return;
+    }
+    printf("u v: ");
+    if (scanf("%d%d", &u, &v) != 2) {
+        printf("Invalid input\n");
+        return;
+    }
+    if (valid(u) && valid(v)) {
+        a[u][v] = a[v][u] = 1;
+        printf("Added\n");
+    } else {
+        printf("Invalid vertices\n");
+    }
+}
+
+void del(void) {
+    int u, v;
+    if (!n) {
+        printf("Create graph first\n");
+        return;
+    }
+    printf("u v: ");
+    if (scanf("%d%d", &u, &v) != 2) {
+        printf("Invalid input\n");
+        return;
+    }
+    if (valid(u) && valid(v)) {
+        a[u][v] = a[v][u] = 0;
+        printf("Removed if present\n");
+    } else {
+        printf("Invalid vertices\n");
+    }
+}
+
+void search(void) {
+    int u, v;
+    if (!n) {
+        printf("Create graph first\n");
+        return;
+    }
+    printf("u v: ");
+    if (scanf("%d%d", &u, &v) != 2) {
+        printf("Invalid input\n");
+        return;
+    }
+    if (valid(u) && valid(v))
+        printf(a[u][v] ? "Edge exists\n" : "Edge absent\n");
+    else
+        printf("Invalid vertices\n");
+}
+
+void display(void) {
+    int i, j;
+    if (!n) {
+        printf("Empty graph\n");
+        return;
+    }
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++)
+            printf("%d ", a[i][j]);
+        printf("\n");
+    }
+}
+
+void bfs(int s, int vis[]) {
+    int q[MAX], f = 0, r = 0, u, v;
+    vis[s] = 1;
+    q[r++] = s;
+    while (f < r) {
+        u = q[f++];
+        printf("%d ", u);
+        for (v = 0; v < n; v++)
+            if (a[u][v] && !vis[v]) {
+                vis[v] = 1;
+                q[r++] = v;
+            }
+    }
+}
+
+void dfs(int u, int vis[]) {
+    int v;
+    vis[u] = 1;
+    printf("%d ", u);
+    for (v = 0; v < n; v++)
+        if (a[u][v] && !vis[v])
+            dfs(v, vis);
+}
+
+void traverse(int mode, int all) {
+    int s, i, vis[MAX] = {0};
+    if (!n) {
+        printf("Create graph first\n");
+        return;
+    }
+    if (!all) {
+        printf("Start vertex: ");
+        if (scanf("%d", &s) != 1 || !valid(s)) {
+            printf("Invalid vertex\n");
+            return;
+        }
+        if (mode == 1) bfs(s, vis);
+        else dfs(s, vis);
+        printf("\n");
+    } else {
+        for (i = 0; i < n; i++)
+            if (!vis[i]) {
+                if (mode == 1) bfs(i, vis);
+                else dfs(i, vis);
+                printf("\n");
+            }
+    }
+}
+
+int main(void) {
+    int c;
+    do {
+        printf("\n1.Create 2.Add edge 3.Delete edge 4.Search edge 5.Display matrix 6.BFS from vertex 7.DFS from vertex 8.BFS all components 9.DFS all components 0.Exit\nChoice: ");
+        if (scanf("%d", &c) != 1) return 0;
+        switch (c) {
+            case 1: create(); break;
+            case 2: add(); break;
+            case 3: del(); break;
+            case 4: search(); break;
+            case 5: display(); break;
+            case 6: traverse(1, 0); break;
+            case 7: traverse(0, 0); break;
+            case 8: traverse(1, 1); break;
+            case 9: traverse(0, 1); break;
+            case 0: break;
+            default: printf("Invalid choice\n");
+        }
+    } while (c != 0);
+    return 0;
+}
+```
+============================================================
+15.  BFS
+===========================================================
+```
+#include <stdio.h>
+#define MAX 50
+
+int a[MAX][MAX], n;
+
+int valid(int v) {
+    return v >= 0 && v < n;
+}
+
+void create(void) {
+    int i, j, e, u, v;
+    printf("Vertices: ");
+    if (scanf("%d", &n) != 1 || n < 1 || n > MAX) {
+        n = 0;
+        printf("Invalid size\n");
+        return;
+    }
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            a[i][j] = 0;
+
+    printf("Edges: ");
+    if (scanf("%d", &e) != 1 || e < 0) {
+        printf("Invalid edge count\n");
+        return;
+    }
+    for (i = 0; i < e; i++) {
+        printf("u v: ");
+        if (scanf("%d%d", &u, &v) != 2) {
+            printf("Invalid input\n");
+            return;
+        }
+        if (valid(u) && valid(v))
+            a[u][v] = a[v][u] = 1;
+        else
+            printf("Invalid edge skipped\n");
+    }
+}
+
+void edge(int op) {
+    int u, v;
+    if (!n) {
+        printf("Create graph first\n");
+        return;
+    }
+    printf("u v: ");
+    if (scanf("%d%d", &u, &v) != 2) {
+        printf("Invalid input\n");
+        return;
+    }
+    if (!valid(u) || !valid(v)) {
+        printf("Invalid vertices\n");
+        return;
+    }
+    if (op == 1) {
+        a[u][v] = a[v][u] = 1;
+        printf("Added\n");
+    } else if (op == 0) {
+        a[u][v] = a[v][u] = 0;
+        printf("Removed if present\n");
+    } else {
+        printf(a[u][v] ? "Edge exists\n" : "Edge absent\n");
+    }
+}
+
+void display(void) {
+    int i, j;
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++)
+            printf("%d ", a[i][j]);
+        printf("\n");
+    }
+}
+
+void bfs(int s, int vis[], int level[]) {
+    int q[MAX], f = 0, r = 0, u, v;
+    vis[s] = 1;
+    level[s] = 0;
+    q[r++] = s;
+    while (f < r) {
+        u = q[f++];
+        printf("%d(L%d) ", u, level[u]);
+        for (v = 0; v < n; v++)
+            if (a[u][v] && !vis[v]) {
+                vis[v] = 1;
+                level[v] = level[u] + 1;
+                q[r++] = v;
+            }
+    }
+}
+
+void run(int all) {
+    int s, i, vis[MAX] = {0}, level[MAX];
+    if (!n) {
+        printf("Create graph first\n");
+        return;
+    }
+    for (i = 0; i < n; i++)
+        level[i] = -1;
+
+    if (!all) {
+        printf("Start vertex: ");
+        if (scanf("%d", &s) != 1 || !valid(s)) {
+            printf("Invalid vertex\n");
+            return;
+        }
+        bfs(s, vis, level);
+        printf("\n");
+    } else {
+        for (i = 0; i < n; i++)
+            if (!vis[i]) {
+                bfs(i, vis, level);
+                printf("\n");
+            }
+    }
+}
+
+int main(void) {
+    int c;
+    do {
+        printf("\n1.Create graph 2.Add edge 3.Delete edge 4.Search edge 5.Display matrix 6.BFS from vertex 7.BFS all components 0.Exit\nChoice: ");
+        if (scanf("%d", &c) != 1) return 0;
+        switch (c) {
+            case 1: create(); break;
+            case 2: edge(1); break;
+            case 3: edge(0); break;
+            case 4: edge(2); break;
+            case 5: if (n) display(); else printf("Empty graph\n"); break;
+            case 6: run(0); break;
+            case 7: run(1); break;
+            case 0: break;
+            default: printf("Invalid choice\n");
+        }
+    } while (c);
+    return 0;
+}
+```
+============================================================
+16. DFS
+===========================================================
+```
+#include <stdio.h>
+#define MAX 50
+
+int a[MAX][MAX], n;
+
+int valid(int v) {
+    return v >= 0 && v < n;
+}
+
+void create(void) {
+    int i, j, e, u, v;
+    printf("Vertices: ");
+    if (scanf("%d", &n) != 1 || n < 1 || n > MAX) {
+        n = 0;
+        printf("Invalid size\n");
+        return;
+    }
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            a[i][j] = 0;
+
+    printf("Edges: ");
+    if (scanf("%d", &e) != 1 || e < 0) {
+        printf("Invalid edge count\n");
+        return;
+    }
+    for (i = 0; i < e; i++) {
+        printf("u v: ");
+        if (scanf("%d%d", &u, &v) != 2) {
+            printf("Invalid input\n");
+            return;
+        }
+        if (valid(u) && valid(v))
+            a[u][v] = a[v][u] = 1;
+        else
+            printf("Invalid edge skipped\n");
+    }
+}
+
+void edge(int op) {
+    int u, v;
+    if (!n) {
+        printf("Create graph first\n");
+        return;
+    }
+    printf("u v: ");
+    if (scanf("%d%d", &u, &v) != 2) {
+        printf("Invalid input\n");
+        return;
+    }
+    if (!valid(u) || !valid(v)) {
+        printf("Invalid vertices\n");
+        return;
+    }
+    if (op == 1) {
+        a[u][v] = a[v][u] = 1;
+        printf("Added\n");
+    } else if (op == 0) {
+        a[u][v] = a[v][u] = 0;
+        printf("Removed if present\n");
+    } else {
+        printf(a[u][v] ? "Edge exists\n" : "Edge absent\n");
+    }
+}
+
+void display(void) {
+    int i, j;
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++)
+            printf("%d ", a[i][j]);
+        printf("\n");
+    }
+}
+
+void dfs(int u, int vis[]) {
+    int v;
+    vis[u] = 1;
+    printf("%d ", u);
+    for (v = 0; v < n; v++)
+        if (a[u][v] && !vis[v])
+            dfs(v, vis);
+}
+
+void run(int all) {
+    int s, i, vis[MAX] = {0};
+    if (!n) {
+        printf("Create graph first\n");
+        return;
+    }
+    if (!all) {
+        printf("Start vertex: ");
+        if (scanf("%d", &s) != 1 || !valid(s)) {
+            printf("Invalid vertex\n");
+            return;
+        }
+        dfs(s, vis);
+        printf("\n");
+    } else {
+        for (i = 0; i < n; i++)
+            if (!vis[i]) {
+                dfs(i, vis);
+                printf("\n");
+            }
+    }
+}
+
+int main(void) {
+    int c;
+    do {
+        printf("\n1.Create graph 2.Add edge 3.Delete edge 4.Search edge 5.Display matrix 6.DFS from vertex 7.DFS all components 0.Exit\nChoice: ");
+        if (scanf("%d", &c) != 1) return 0;
+        switch (c) {
+            case 1: create(); break;
+            case 2: edge(1); break;
+            case 3: edge(0); break;
+            case 4: edge(2); break;
+            case 5: if (n) display(); else printf("Empty graph\n"); break;
+            case 6: run(0); break;
+            case 7: run(1); break;
+            case 0: break;
+            default: printf("Invalid choice\n");
+        }
+    } while (c);
+    return 0;
+}
+```
+============================================================
+17. Prims_MST
+===========================================================
+```
+#include <stdio.h>
+#define MAX 50
+#define INF 1000000000
+
+int g[MAX][MAX], n;
+
+int valid(int v) {
+    return v >= 0 && v < n;
+}
+
+void create(void) {
+    int i, j, e, u, v, w;
+    printf("Vertices: ");
+    if (scanf("%d", &n) != 1 || n < 1 || n > MAX) {
+        n = 0;
+        printf("Invalid size\n");
+        return;
+    }
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            g[i][j] = (i == j ? 0 : INF);
+
+    printf("Edges: ");
+    if (scanf("%d", &e) != 1 || e < 0) {
+        printf("Invalid edge count\n");
+        return;
+    }
+    for (i = 0; i < e; i++) {
+        printf("u v weight: ");
+        if (scanf("%d%d%d", &u, &v, &w) != 3) {
+            printf("Invalid input\n");
+            return;
+        }
+        if (valid(u) && valid(v) && u != v && w >= 0)
+            g[u][v] = g[v][u] = w;
+        else
+            printf("Invalid edge skipped\n");
+    }
+}
+
+void edge(int op) {
+    int u, v, w = 0;
+    if (!n) {
+        printf("Create graph first\n");
+        return;
+    }
+    if (op == 1) {
+        printf("u v weight: ");
+        if (scanf("%d%d%d", &u, &v, &w) != 3) {
+            printf("Invalid input\n");
+            return;
+        }
+    } else {
+        printf("u v: ");
+        if (scanf("%d%d", &u, &v) != 2) {
+            printf("Invalid input\n");
+            return;
+        }
+    }
+    if (!valid(u) || !valid(v) || u == v || (op == 1 && w < 0)) {
+        printf("Invalid input\n");
+        return;
+    }
+    if (op == 1) {
+        g[u][v] = g[v][u] = w;
+        printf("Added/updated\n");
+    } else if (op == 0) {
+        g[u][v] = g[v][u] = INF;
+        printf("Removed if present\n");
+    } else if (g[u][v] == INF) {
+        printf("Edge absent\n");
+    } else {
+        printf("Weight = %d\n", g[u][v]);
+    }
+}
+
+void display(void) {
+    int i, j;
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++)
+            if (g[i][j] == INF)
+                printf("INF ");
+            else
+                printf("%d ", g[i][j]);
+        printf("\n");
+    }
+}
+
+void prim(int s) {
+    int key[MAX], par[MAX], used[MAX] = {0}, i, j, u, total = 0;
+    for (i = 0; i < n; i++) {
+        key[i] = INF;
+        par[i] = -1;
+    }
+    key[s] = 0;
+    for (i = 0; i < n; i++) {
+        u = -1;
+        for (j = 0; j < n; j++)
+            if (!used[j] && (u == -1 || key[j] < key[u]))
+                u = j;
+
+        if (u == -1 || key[u] == INF) {
+            printf("Graph disconnected: no MST for all vertices\n");
+            return;
+        }
+        used[u] = 1;
+        if (par[u] != -1) {
+            printf("%d -- %d : %d\n", par[u], u, key[u]);
+            total += key[u];
+        }
+        for (j = 0; j < n; j++)
+            if (!used[j] && g[u][j] != INF && g[u][j] < key[j]) {
+                key[j] = g[u][j];
+                par[j] = u;
+            }
+    }
+    printf("Total MST cost = %d\n", total);
+}
+
+int main(void) {
+    int c, s;
+    do {
+        printf("\n1.Create graph 2.Add/update edge 3.Delete edge 4.Search edge 5.Display matrix 6.Run Prim 0.Exit\nChoice: ");
+        if (scanf("%d", &c) != 1) return 0;
+        switch (c) {
+            case 1: create(); break;
+            case 2: edge(1); break;
+            case 3: edge(0); break;
+            case 4: edge(2); break;
+            case 5: if (n) display(); else printf("Empty graph\n"); break;
+            case 6:
+                if (!n) printf("Create graph first\n");
+                else {
+                    printf("Start vertex: ");
+                    if (scanf("%d", &s) == 1 && valid(s)) prim(s);
+                    else printf("Invalid vertex\n");
+                }
+                break;
+            case 0: break;
+            default: printf("Invalid choice\n");
+        }
+    } while (c);
+    return 0;
+}
+```
+============================================================
+18 Floyd_Warshall
+===========================================================
+```
+#include <stdio.h>
+#define MAX 50
+#define INF 1000000000
+
+/* g = original graph (direct edges), d = shortest-distance matrix */
+int g[MAX][MAX];
+long long d[MAX][MAX];
+int n, done, neg;
+
+int valid(int v) {
+    return v >= 0 && v < n;
+}
+
+/* store a directed edge in g; self-loop only allowed if negative */
+void setEdge(int u, int v, int w, int keepMin) {
+    if (u == v) {
+        if (w < 0) g[u][u] = w;
+        else printf("Self-loop ignored\n");
+        return;
+    }
+    if (!keepMin || w < g[u][v])
+        g[u][v] = w;
+}
+
+void create(void) {
+    int i, j, e, u, v, w;
+    printf("Vertices: ");
+    if (scanf("%d", &n) != 1 || n < 1 || n > MAX) {
+        n = 0;
+        printf("Invalid size\n");
+        return;
+    }
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            g[i][j] = (i == j ? 0 : INF);
+    done = 0;
+    neg = 0;
+
+    printf("Directed edges: ");
+    if (scanf("%d", &e) != 1 || e < 0) {
+        printf("Invalid edge count\n");
+        return;
+    }
+    for (i = 0; i < e; i++) {
+        printf("u v weight: ");
+        if (scanf("%d%d%d", &u, &v, &w) != 3) {
+            printf("Invalid input\n");
+            return;
+        }
+        if (valid(u) && valid(v))
+            setEdge(u, v, w, 1);
+        else
+            printf("Invalid edge skipped\n");
+    }
+}
+
+void edge(int op) {
+    int u, v, w = 0;
+    if (!n) {
+        printf("Create graph first\n");
+        return;
+    }
+    if (op == 1) {
+        printf("u v weight: ");
+        if (scanf("%d%d%d", &u, &v, &w) != 3) {
+            printf("Invalid input\n");
+            return;
+        }
+    } else {
+        printf("u v: ");
+        if (scanf("%d%d", &u, &v) != 2) {
+            printf("Invalid input\n");
+            return;
+        }
+    }
+    if (!valid(u) || !valid(v)) {
+        printf("Invalid vertices\n");
+        return;
+    }
+    if (op == 1) {
+        setEdge(u, v, w, 0);
+        done = 0;
+        printf("Added/updated\n");
+    } else if (op == 0) {
+        g[u][v] = (u == v ? 0 : INF);
+        done = 0;
+        printf("Removed if present\n");
+    } else if (u == v || g[u][v] == INF) {
+        printf("No direct edge\n");
+    } else {
+        printf("Direct edge weight = %d\n", g[u][v]);
+    }
+}
+
+void displayGraph(void) {
+    int i, j;
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++)
+            if (g[i][j] == INF)
+                printf("INF ");
+            else
+                printf("%d ", g[i][j]);
+        printf("\n");
+    }
+}
+
+void displayDist(void) {
+    int i, j;
+    if (!done) {
+        printf("Run Floyd-Warshall first\n");
+        return;
+    }
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++)
+            if (d[i][j] >= INF)
+                printf("INF ");
+            else
+                printf("%lld ", d[i][j]);
+        printf("\n");
+    }
+}
+
+void floyd(void) {
+    int i, j, k;
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            d[i][j] = g[i][j];
+
+    for (k = 0; k < n; k++)
+        for (i = 0; i < n; i++)
+            for (j = 0; j < n; j++)
+                if (d[i][k] < INF && d[k][j] < INF && d[i][k] + d[k][j] < d[i][j]) {
+                    d[i][j] = d[i][k] + d[k][j];
+                    if (d[i][j] < -INF) d[i][j] = -INF;   /* avoid overflow */
+                }
+
+    done = 1;
+    neg = 0;
+    for (i = 0; i < n; i++)
+        if (d[i][i] < 0)
+            neg = 1;
+    if (neg)
+        printf("Negative-weight cycle detected: distances are not reliable\n");
+    else
+        printf("Algorithm completed; no negative-weight cycle detected\n");
+}
+
+void query(void) {
+    int u, v;
+    if (!done) {
+        printf("Run Floyd-Warshall first\n");
+        return;
+    }
+    if (neg) {
+        printf("Negative-weight cycle present: shortest distances are not defined\n");
+        return;
+    }
+    printf("Source destination: ");
+    if (scanf("%d%d", &u, &v) != 2 || !valid(u) || !valid(v)) {
+        printf("Invalid vertices\n");
+        return;
+    }
+    if (d[u][v] >= INF)
+        printf("No path\n");
+    else
+        printf("Shortest distance from %d to %d = %lld\n", u, v, d[u][v]);
+}
+
+int main(void) {
+    int c;
+    do {
+        printf("\n1.Create graph 2.Add/update directed edge 3.Delete directed edge 4.Search edge 5.Display graph matrix 6.Run Floyd-Warshall 7.Display distance matrix 8.Query distance 0.Exit\nChoice: ");
+        if (scanf("%d", &c) != 1) return 0;
+        switch (c) {
+            case 1: create(); break;
+            case 2: edge(1); break;
+            case 3: edge(0); break;
+            case 4: edge(2); break;
+            case 5: if (n) displayGraph(); else printf("Empty graph\n"); break;
+            case 6: if (n) floyd(); else printf("Create graph first\n"); break;
+            case 7: if (n) displayDist(); else printf("Create graph first\n"); break;
+            case 8: query(); break;
+            case 0: break;
+            default: printf("Invalid choice\n");
+        }
+    } while (c);
+    return 0;
+}
+```
+============================================================
+19 Linear_Probing
+===========================================================
+```
+#include <stdio.h>
+#define SIZE 11
+#define EMPTY -1
+#define DELETED -2
+
+int t[SIZE];
+
+void init(void) {
+    int i;
+    for (i = 0; i < SIZE; i++)
+        t[i] = EMPTY;
+}
+
+int hash(int k) {
+    return k % SIZE;
+}
+
+int search(int k) {
+    int i, p;
+    for (i = 0; i < SIZE; i++) {
+        p = (hash(k) + i) % SIZE;
+        if (t[p] == EMPTY) return -1;
+        if (t[p] == k) return p;
+    }
+    return -1;
+}
+
+void insert(int k) {
+    int i, p, del = -1;
+    if (search(k) >= 0) {
+        printf("Duplicate key\n");
+        return;
+    }
+    for (i = 0; i < SIZE; i++) {
+        p = (hash(k) + i) % SIZE;
+        if (t[p] == DELETED && del == -1)
+            del = p;
+        if (t[p] == EMPTY) {
+            if (del != -1) p = del;
+            t[p] = k;
+            printf("Key %d: hash index %d -> placed at index %d\n", k, hash(k), p);
+            return;
+        }
+    }
+    if (del != -1) {
+        t[del] = k;
+        printf("Key %d: hash index %d -> placed at index %d\n", k, hash(k), del);
+    } else {
+        printf("Table full\n");
+    }
+}
+
+void removeKey(int k) {
+    int p = search(k);
+    if (p < 0)
+        printf("Key not found\n");
+    else {
+        t[p] = DELETED;
+        printf("Deleted\n");
+    }
+}
+
+void display(void) {
+    int i;
+    for (i = 0; i < SIZE; i++) {
+        printf("%d: ", i);
+        if (t[i] == EMPTY) printf("EMPTY\n");
+        else if (t[i] == DELETED) printf("DELETED\n");
+        else printf("%d\n", t[i]);
+    }
+}
+
+int main(void) {
+    int c, k, p;
+    init();
+    do {
+        printf("\n1.Insert 2.Search 3.Delete 4.Display 5.Reset 0.Exit\nChoice: ");
+        if (scanf("%d", &c) != 1) return 0;
+        switch (c) {
+            case 1:
+                printf("Non-negative key: ");
+                if (scanf("%d", &k) == 1 && k >= 0) insert(k);
+                else printf("Invalid key\n");
+                break;
+            case 2:
+                printf("Key: ");
+                if (scanf("%d", &k) == 1 && k >= 0) {
+                    p = search(k);
+                    if (p < 0) printf("Not found\n");
+                    else printf("Found at index %d\n", p);
+                } else {
+                    printf("Invalid key\n");
+                }
+                break;
+            case 3:
+                printf("Key: ");
+                if (scanf("%d", &k) == 1 && k >= 0) removeKey(k);
+                else printf("Invalid key\n");
+                break;
+            case 4: display(); break;
+            case 5: init(); printf("Reset\n"); break;
+            case 0: break;
+            default: printf("Invalid choice\n");
+        }
+    } while (c);
+    return 0;
+}
+```
+
+============================================================
+20 Separate_Chaining
+===========================================================
+```
+#include <stdio.h>
+#include <stdlib.h>
+#define SIZE 11
+
+typedef struct Node {
+    int key;
+    struct Node *next;
+} Node;
+
+Node *t[SIZE];
+
+int hash(int k) {
+    return k % SIZE;
+}
+
+int search(int k) {
+    Node *p = t[hash(k)];
+    while (p) {
+        if (p->key == k) return 1;
+        p = p->next;
+    }
+    return 0;
+}
+
+void insert(int k) {
+    int i = hash(k);
+    Node *p;
+    if (search(k)) {
+        printf("Duplicate key\n");
+        return;
+    }
+    p = malloc(sizeof(Node));
+    if (!p) {
+        printf("Allocation failed\n");
+        return;
+    }
+    p->key = k;
+    p->next = t[i];
+    t[i] = p;
+    printf("Inserted in bucket %d\n", i);
+}
+
+void removeKey(int k) {
+    int i = hash(k);
+    Node *p = t[i], *prev = NULL;
+    while (p && p->key != k) {
+        prev = p;
+        p = p->next;
+    }
+    if (!p) {
+        printf("Key not found\n");
+        return;
+    }
+    if (prev) prev->next = p->next;
+    else t[i] = p->next;
+    free(p);
+    printf("Deleted\n");
+}
+
+void display(void) {
+    int i;
+    Node *p;
+    for (i = 0; i < SIZE; i++) {
+        printf("%d: ", i);
+        p = t[i];
+        while (p) {
+            printf("%d -> ", p->key);
+            p = p->next;
+        }
+        printf("NULL\n");
+    }
+}
+
+void clear(void) {
+    int i;
+    Node *p, *q;
+    for (i = 0; i < SIZE; i++) {
+        p = t[i];
+        while (p) {
+            q = p->next;
+            free(p);
+            p = q;
+        }
+        t[i] = NULL;
+    }
+}
+
+int main(void) {
+    int c, k;
+    do {
+        printf("\n1.Insert 2.Search 3.Delete 4.Display 5.Clear table 0.Exit\nChoice: ");
+        if (scanf("%d", &c) != 1) {
+            clear();
+            return 0;
+        }
+        switch (c) {
+            case 1:
+                printf("Non-negative key: ");
+                if (scanf("%d", &k) == 1 && k >= 0) insert(k);
+                else printf("Invalid key\n");
+                break;
+            case 2:
+                printf("Key: ");
+                if (scanf("%d", &k) == 1 && k >= 0) printf(search(k) ? "Found\n" : "Not found\n");
+                else printf("Invalid key\n");
+                break;
+            case 3:
+                printf("Key: ");
+                if (scanf("%d", &k) == 1 && k >= 0) removeKey(k);
+                else printf("Invalid key\n");
+                break;
+            case 4: display(); break;
+            case 5: clear(); printf("Cleared\n"); break;
+            case 0: break;
+            default: printf("Invalid choice\n");
+        }
+    } while (c);
+    clear();
+    return 0;
+}
+```
