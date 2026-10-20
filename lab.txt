@@ -1,0 +1,477 @@
+============================================================
+ASSIGNMENT 14: GRAPH REPRESENTATION
+===========================================================
+```
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 20
+int adjMatrix[MAX][MAX];
+struct Node {
+    int vertex;
+    struct Node *next;
+};
+struct Node *adjList[MAX];
+void addEdge(int u, int v) {
+    adjMatrix[u][v] = 1;
+    adjMatrix[v][u] = 1;
+    struct Node *newNode = malloc(sizeof(struct Node));
+    newNode->vertex = v;
+    newNode->next = adjList[u];
+    adjList[u] = newNode;
+    newNode = malloc(sizeof(struct Node));
+    newNode->vertex = u;
+    newNode->next = adjList[v];
+    adjList[v] = newNode;
+}
+void displayMatrix(int n) {
+    int i, j;
+    printf("\nAdjacency Matrix:\n");
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++)
+            printf("%d ", adjMatrix[i][j]);
+        printf("\n");
+    }
+}
+void displayList(int n) {
+    int i;
+    struct Node *temp;
+    printf("\nAdjacency List:\n");
+    for (i = 0; i < n; i++) {
+        printf("%d -> ", i);
+        temp = adjList[i];
+        while (temp != NULL) {
+            printf("%d -> ", temp->vertex);
+            temp = temp->next;
+        }
+        printf("NULL\n");
+    }
+}
+int main() {
+    int n, e, u, v, i;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    if (n < 1 || n > MAX) {
+        printf("Invalid number of vertices.\n");
+        return 1;
+    }
+    for (i = 0; i < n; i++)
+        adjList[i] = NULL;
+    printf("Enter number of edges: ");
+    scanf("%d", &e);
+    if (e < 0 || e > n * (n - 1) / 2) {
+        printf("Invalid number of edges.\n");
+        return 1;
+    }
+    printf("Enter edges (u v), vertices numbered 0 to %d:\n", n - 1);
+    for (i = 0; i < e; i++) {
+        scanf("%d%d", &u, &v);
+        if (u < 0 || u >= n || v < 0 || v >= n || u == v) {
+            printf("Invalid edge. Enter valid vertices.\n");
+            i--;
+            continue;
+        }
+        addEdge(u, v);
+    }
+    displayMatrix(n);
+    displayList(n);
+    return 0;
+}
+```
+============================================================
+ASSIGNMENT 15: BREADTH FIRST SEARCH (BFS)
+===========================================================
+```
+#include <stdio.h>
+int main() {
+    int adj[20][20] = {0}, visited[20] = {0}, queue[20];
+    int n, e, i, u, v, start, front = 0, rear = 0;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    printf("Enter number of edges: ");
+    scanf("%d", &e);
+    printf("Enter edges (u v):\n");
+    for (i = 0; i < e; i++) {
+        scanf("%d%d", &u, &v);
+        adj[u][v] = 1;
+        adj[v][u] = 1;   /* undirected graph */
+    }
+    printf("Enter starting vertex: ");
+    scanf("%d", &start);
+    visited[start] = 1;
+    queue[rear++] = start;   /* enqueue start */
+    printf("BFS Traversal: ");
+    while (front < rear) {
+        u = queue[front++];   /* dequeue */
+        printf("%d ", u);
+        for (v = 0; v < n; v++) {
+            if (adj[u][v] == 1 && !visited[v]) {
+                visited[v] = 1;
+                queue[rear++] = v;   /* enqueue */
+            }
+        }
+    }
+    printf("\n");
+    return 0;
+}
+```
+============================================================
+ASSIGNMENT 16: DEPTH FIRST SEARCH (DFS)
+===========================================================
+```
+#include <stdio.h>
+int adj[20][20], visited[20], n;
+void dfs(int u) {
+    int v;
+    visited[u] = 1;
+    printf("%d ", u);
+    for (v = 0; v < n; v++) {
+        if (adj[u][v] == 1 && !visited[v])
+            dfs(v);
+    }
+}
+int main() {
+    int e, i, u, v, start;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    printf("Enter number of edges: ");
+    scanf("%d", &e);
+    printf("Enter edges (u v):\n");
+    for (i = 0; i < e; i++) {
+        scanf("%d%d", &u, &v);
+        adj[u][v] = 1;
+        adj[v][u] = 1;   /* undirected graph */
+    }
+    printf("Enter starting vertex: ");
+    scanf("%d", &start);
+    printf("DFS Traversal: ");
+    dfs(start);
+    printf("\n");
+    return 0;
+}
+```
+============================================================
+ASSIGNMENT 17: PRIM'S ALGORITHM (MST)
+===========================================================
+```
+#include <stdio.h>
+#define MAX 20
+#define INF 9999
+int main() {
+    int g[MAX][MAX], key[MAX], parent[MAX], selected[MAX] = {0};
+    int n, e, i, j, u, v, w, count, total = 0;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    printf("Enter number of edges: ");
+    scanf("%d", &e);
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            g[i][j] = 0;   /* 0 means no edge */
+    printf("Enter edges (u v weight):\n");
+    for (i = 0; i < e; i++) {
+        scanf("%d%d%d", &u, &v, &w);
+        g[u][v] = w;
+        g[v][u] = w;
+    }
+    for (i = 0; i < n; i++) { key[i] = INF; parent[i] = -1; }
+    key[0] = 0;   /* start from vertex 0 */
+    printf("\nEdge \tWeight\n");
+    for (count = 0; count < n; count++) {
+        /* pick unselected vertex with minimum key */
+        u = -1;
+        for (i = 0; i < n; i++)
+            if (!selected[i] && (u == -1 || key[i] < key[u]))
+                u = i;
+        if (key[u] == INF) {
+            printf("Graph is disconnected. MST not possible.\n");
+            return 0;
+        }
+        selected[u] = 1;
+        if (parent[u] != -1) {
+            printf("%d - %d\t%d\n", parent[u], u, g[parent[u]][u]);
+            total += key[u];
+        }
+        for (v = 0; v < n; v++)
+            if (g[u][v] && !selected[v] && g[u][v] < key[v]) {
+                key[v] = g[u][v];
+                parent[v] = u;
+            }
+    }
+    printf("\nTotal weight of MST = %d\n", total);
+    return 0;
+}
+```
+============================================================
+ASSIGNMENT 18: FLOYD-WARSHALL ALGORITHM
+===========================================================
+```
+#include <stdio.h>
+#define MAX 20
+#define INF 99999
+int main() {
+    int d[MAX][MAX], n, e, i, j, k, u, v, w;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    printf("Enter number of edges: ");
+    scanf("%d", &e);
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            d[i][j] = (i == j) ? 0 : INF;
+    printf("Enter edges (u v weight):\n");
+    for (i = 0; i < e; i++) {
+        scanf("%d %d %d", &u, &v, &w);
+        d[u][v] = w;
+    }
+    for (k = 0; k < n; k++)
+        for (i = 0; i < n; i++)
+            for (j = 0; j < n; j++)
+                if (d[i][k] != INF && d[k][j] != INF &&
+                    d[i][k] + d[k][j] < d[i][j])
+                    d[i][j] = d[i][k] + d[k][j];
+    printf("\nAll-pairs shortest distance matrix:\n");
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            if (d[i][j] == INF)
+                printf("%5s", "INF");
+            else
+                printf("%5d", d[i][j]);
+        }
+        printf("\n");
+    }
+    for (i = 0; i < n; i++)
+        if (d[i][i] < 0) {
+            printf("\nNegative-weight cycle detected.\n");
+            return 0;
+        }
+    printf("\nNo negative-weight cycle.\n");
+    return 0;
+}
+```
+============================================================
+ASSIGNMENT 19: HASH TABLE USING LINEAR PROBING
+===========================================================
+```
+#include <stdio.h>
+#define EMPTY -1
+#define MAX 50
+int table[MAX], size;
+int hash(int key) { return key % size; }
+void insert(int key) {
+    int i, idx = hash(key);
+    for (i = 0; i < size; i++) {
+        int pos = (idx + i) % size;   /* wrap around */
+        if (table[pos] == EMPTY) {
+            table[pos] = key;
+            printf("Key %d: hash index %d -> placed at index %d\n", key, idx, pos);
+            return;
+        }
+    }
+    printf("Table is full. Cannot insert %d\n", key);
+}
+void search(int key) {
+    int i, idx = hash(key);
+    for (i = 0; i < size; i++) {
+        int pos = (idx + i) % size;
+        if (table[pos] == key) { printf("Key %d found at index %d\n", key, pos); return; }
+        if (table[pos] == EMPTY) break;
+    }
+    printf("Key %d not found\n", key);
+}
+void display() {
+    int i;
+    printf("\nIndex\tKey\n");
+    for (i = 0; i < size; i++) {
+        if (table[i] == EMPTY) printf("%d\t--\n", i);
+        else printf("%d\t%d\n", i, table[i]);
+    }
+}
+int main() {
+    int n, i, key;
+    printf("Enter hash table size: ");
+    scanf("%d", &size);
+    for (i = 0; i < size; i++) table[i] = EMPTY;
+    printf("Enter number of keys: ");
+    scanf("%d", &n);
+    printf("Enter the keys:\n");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &key);
+        insert(key);
+    }
+    display();
+    printf("\nEnter key to search: ");
+    scanf("%d", &key);
+    search(key);
+    return 0;
+}
+```
+============================================================
+ASSIGNMENT 20: HASH TABLE USING SEPARATE CHAINING
+===========================================================
+```
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 1000
+struct Node {
+    int key;
+    struct Node *next;
+};
+struct Node *table[MAX];
+int m;
+int hashFunction(int key) {
+    return key % m;
+}
+int searchKey(int key) {
+    int index = hashFunction(key);
+    struct Node *current = table[index];
+    while (current != NULL) {
+        if (current->key == key)
+            return 1;
+        current = current->next;
+    }
+    return 0;
+}
+void insertKey(int key) {
+    int index = hashFunction(key);
+    struct Node *newNode;
+    struct Node *current;
+    if (searchKey(key)) {
+        printf("Duplicate key %d ignored.\n", key);
+        return;
+    }
+    newNode = malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed.\n");
+        return;
+    }
+    newNode->key = key;
+    newNode->next = NULL;
+    if (table[index] == NULL) {
+        table[index] = newNode;
+    } else {
+        current = table[index];
+        while (current->next != NULL)
+            current = current->next;
+        current->next = newNode;
+    }
+    printf("Inserted %d at bucket %d.\n", key, index);
+}
+void deleteKey(int key) {
+    int index = hashFunction(key);
+    struct Node *current = table[index];
+    struct Node *previous = NULL;
+    while (current != NULL && current->key != key) {
+        previous = current;
+        current = current->next;
+    }
+    if (current == NULL) {
+        printf("Key %d not found.\n", key);
+        return;
+    }
+    if (previous == NULL)
+        table[index] = current->next;
+    else
+        previous->next = current->next;
+    free(current);
+    printf("Deleted %d.\n", key);
+}
+void display(void) {
+    int i;
+    struct Node *current;
+    printf("\nHash Table Using Separate Chaining\n");
+    for (i = 0; i < m; i++) {
+        printf("Bucket %d: ", i);
+        current = table[i];
+        while (current != NULL) {
+            printf("%d -> ", current->key);
+            current = current->next;
+        }
+        printf("NULL\n");
+    }
+}
+void freeTable(void) {
+    int i;
+    struct Node *current, *temp;
+    for (i = 0; i < m; i++) {
+        current = table[i];
+        while (current != NULL) {
+            temp = current;
+            current = current->next;
+            free(temp);
+        }
+        table[i] = NULL;
+    }
+}
+int main(void) {
+    int i, n, key, choice;
+    printf("Enter hash table size (1-%d): ", MAX);
+    if (scanf("%d", &m) != 1 || m < 1 || m > MAX) {
+        printf("Invalid table size.\n");
+        return 1;
+    }
+    for (i = 0; i < m; i++)
+        table[i] = NULL;
+    printf("Enter number of keys: ");
+    if (scanf("%d", &n) != 1 || n < 0) {
+        printf("Invalid number of keys.\n");
+        return 1;
+    }
+    for (i = 0; i < n; i++) {
+        printf("Enter key: ");
+        if (scanf("%d", &key) != 1 || key < 0) {
+            printf("Invalid key. Use non-negative integers.\n");
+            freeTable();
+            return 1;
+        }
+        insertKey(key);
+    }
+    display();
+    do {
+        printf("\n1. Insert\n2. Search\n3. Delete\n");
+        printf("4. Display\n5. Exit\n");
+        printf("Enter choice: ");
+        if (scanf("%d", &choice) != 1)
+            break;
+        switch (choice) {
+            case 1:
+                printf("Enter key to insert: ");
+                if (scanf("%d", &key) != 1 || key < 0) {
+                    printf("Invalid key.\n");
+                    freeTable();
+                    return 1;
+                }
+                insertKey(key);
+                break;
+            case 2:
+                printf("Enter key to search: ");
+                if (scanf("%d", &key) != 1 || key < 0) {
+                    printf("Invalid key.\n");
+                    freeTable();
+                    return 1;
+                }
+                if (searchKey(key))
+                    printf("Key found.\n");
+                else
+                    printf("Key not found.\n");
+                break;
+            case 3:
+                printf("Enter key to delete: ");
+                if (scanf("%d", &key) != 1 || key < 0) {
+                    printf("Invalid key.\n");
+                    freeTable();
+                    return 1;
+                }
+                deleteKey(key);
+                break;
+            case 4:
+                display();
+                break;
+            case 5:
+                printf("Exiting program.\n");
+                break;
+            default:
+                printf("Invalid choice.\n");
+        }
+    } while (choice != 5);
+    freeTable();
+    return 0;
+}
+```
