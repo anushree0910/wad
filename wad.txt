@@ -8,7 +8,10 @@ int main() {
     int a[100], n, i, key, pos = -1;
 
     printf("Enter number of elements: ");
-    scanf("%d", &n);
+    if (scanf("%d", &n) != 1 || n < 1 || n > 100) {
+        printf("Invalid number of elements (1-100)\n");
+        return 1;
+    }
 
     printf("Enter elements:\n");
     for (i = 0; i < n; i++)
@@ -44,7 +47,10 @@ int main() {
     int low, high, mid, pos = -1;
 
     printf("Enter number of elements: ");
-    scanf("%d", &n);
+    if (scanf("%d", &n) != 1 || n < 1 || n > 100) {
+        printf("Invalid number of elements (1-100)\n");
+        return 1;
+    }
 
     printf("Enter elements in sorted order:\n");
     for (i = 0; i < n; i++)
@@ -88,7 +94,10 @@ int main() {
     int a[100], n, i, j, temp;
 
     printf("Enter number of elements: ");
-    scanf("%d", &n);
+    if (scanf("%d", &n) != 1 || n < 1 || n > 100) {
+        printf("Invalid number of elements (1-100)\n");
+        return 1;
+    }
 
     printf("Enter elements:\n");
     for (i = 0; i < n; i++)
@@ -123,7 +132,10 @@ int main() {
     int a[100], n, i, j, key;
 
     printf("Enter number of elements: ");
-    scanf("%d", &n);
+    if (scanf("%d", &n) != 1 || n < 1 || n > 100) {
+        printf("Invalid number of elements (1-100)\n");
+        return 1;
+    }
 
     printf("Enter elements:\n");
     for (i = 0; i < n; i++)
@@ -185,7 +197,10 @@ int main() {
     int a[100], n, i;
 
     printf("Enter number of elements: ");
-    scanf("%d", &n);
+    if (scanf("%d", &n) != 1 || n < 1 || n > 100) {
+        printf("Invalid number of elements (1-100)\n");
+        return 1;
+    }
 
     printf("Enter elements:\n");
     for (i = 0; i < n; i++)
@@ -245,7 +260,10 @@ int main() {
     int a[100], n, i;
 
     printf("Enter number of elements: ");
-    scanf("%d", &n);
+    if (scanf("%d", &n) != 1 || n < 1 || n > 100) {
+        printf("Invalid number of elements (1-100)\n");
+        return 1;
+    }
 
     printf("Enter elements:\n");
     for (i = 0; i < n; i++)
@@ -307,6 +325,11 @@ void insertPosition(int value, int pos) {
     struct Node *newNode, *temp;
     int i;
 
+    if (pos < 1 || pos > count + 1) {
+        printf("Invalid position. Valid range is 1 to %d\n", count + 1);
+        return;
+    }
+
     newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = value;
 
@@ -340,7 +363,7 @@ void deleteBeginning() {
 }
 
 void deleteEnd() {
-    struct Node *temp, *prev;
+    struct Node *temp, *prev = NULL;
 
     if (head == NULL)
         return;
@@ -370,6 +393,11 @@ void deletePosition(int pos) {
 
     if (head == NULL)
         return;
+
+    if (pos < 1 || pos > count) {
+        printf("Invalid position. Valid range is 1 to %d\n", count);
+        return;
+    }
 
     if (pos == 1) {
         temp = head;
@@ -418,6 +446,17 @@ void search(int value) {
         pos++;
     }
     printf("%d not found in the list.\n", value);
+}
+
+void freeList() {
+    struct Node *temp;
+
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+    count = 0;
 }
 
 int main() {
@@ -469,6 +508,7 @@ int main() {
     scanf("%d", &value);
     search(value);
 
+    freeList();
     return 0;
 }
 
@@ -531,6 +571,11 @@ void insertEnd(int value) {
 void insertPosition(int value, int pos) {
     struct Node *newNode, *temp;
     int i;
+
+    if (pos < 1 || pos > count + 1) {
+        printf("Invalid position. Valid range is 1 to %d\n", count + 1);
+        return;
+    }
 
     newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = value;
@@ -605,6 +650,11 @@ void deletePosition(int pos) {
     if (head == NULL)
         return;
 
+    if (pos < 1 || pos > count) {
+        printf("Invalid position. Valid range is 1 to %d\n", count);
+        return;
+    }
+
     if (pos == 1) {
         deleteBeginning();
         return;
@@ -675,6 +725,17 @@ void search(int value) {
     printf("%d not found in the list.\n", value);
 }
 
+void freeList() {
+    struct Node *temp;
+
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+    count = 0;
+}
+
 int main() {
     int n, i, value, pos;
 
@@ -725,6 +786,7 @@ int main() {
     scanf("%d", &value);
     search(value);
 
+    freeList();
     return 0;
 }
 
@@ -793,6 +855,11 @@ void insertEnd(int value) {
 void insertPosition(int value, int pos) {
     struct Node *newNode, *temp;
     int i;
+
+    if (pos < 1 || pos > count + 1) {
+        printf("Invalid position. Valid range is 1 to %d\n", count + 1);
+        return;
+    }
 
     if (pos == 1) {
         insertBeginning(value);
@@ -873,6 +940,11 @@ void deletePosition(int pos) {
     if (head == NULL)
         return;
 
+    if (pos < 1 || pos > count) {
+        printf("Invalid position. Valid range is 1 to %d\n", count);
+        return;
+    }
+
     if (pos == 1) {
         deleteBeginning();
         return;
@@ -931,6 +1003,25 @@ void search(int value) {
     printf("%d not found in the list.\n", value);
 }
 
+void freeList() {
+    struct Node *cur, *temp;
+
+    if (head == NULL)
+        return;
+
+    cur = head->next;
+
+    while (cur != head) {
+        temp = cur;
+        cur = cur->next;
+        free(temp);
+    }
+
+    free(head);
+    head = NULL;
+    count = 0;
+}
+
 int main() {
     int n, i, value, pos;
 
@@ -980,6 +1071,7 @@ int main() {
     scanf("%d", &value);
     search(value);
 
+    freeList();
     return 0;
 }
 
@@ -1095,6 +1187,7 @@ void size() {
 int main()
 {
     int choice, n, i;
+    struct Node *temp;
 
     do
     {
@@ -1108,7 +1201,11 @@ int main()
         printf("7. Exit\n");
 
         printf("Enter your choice: ");
-        scanf("%d", &choice);
+        if (scanf("%d", &choice) != 1)
+        {
+            printf("Invalid input. Exiting...\n");
+            break;
+        }
 
         switch (choice)
         {
@@ -1157,6 +1254,13 @@ int main()
 
     } while (choice != 7);
 
+    while (top != NULL)
+    {
+        temp = top;
+        top = top->next;
+        free(temp);
+    }
+
     return 0;
 }
 
@@ -1164,7 +1268,7 @@ int main()
 ============================================================
 INFIX TO POSTFIX
 ============================================================
-
+```
 #include <stdio.h> 
 #include <ctype.h> 
 #include <string.h> 
@@ -1197,14 +1301,16 @@ int precedence(char op) {
         return 0; 
 } 
  
-void infixToPostfix(char infix[], char postfix[]) { 
+int infixToPostfix(char infix[], char postfix[]) { 
     int i, j = 0; 
     char ch; 
+
+    top = -1;
  
     for (i = 0; infix[i] != '\0'; i++) { 
         ch = infix[i]; 
  
-        if (isalnum(ch)) { 
+        if (isalnum((unsigned char)ch)) { 
             postfix[j++] = ch; 
         } 
         else if (ch == '(') { 
@@ -1213,34 +1319,53 @@ void infixToPostfix(char infix[], char postfix[]) {
         else if (ch == ')') { 
             while (top != -1 && peek() != '(') 
                 postfix[j++] = pop(); 
+
+            if (top == -1) {
+                printf("Error: unbalanced brackets\n");
+                return 0;
+            }
  
             pop(); 
         } 
-        else { 
-            while (top != -1 && 
-                   precedence(peek()) >= precedence(ch)) { 
+        else if (precedence(ch) > 0) { 
+            /* '^' is right-associative, all other operators are left-associative */
+            while (top != -1 && peek() != '(' &&
+                   (precedence(peek()) > precedence(ch) ||
+                    (precedence(peek()) == precedence(ch) && ch != '^'))) { 
                 postfix[j++] = pop(); 
             } 
  
             push(ch); 
         } 
+        else {
+            printf("Error: invalid character '%c'\n", ch);
+            return 0;
+        }
     } 
  
-    while (top != -1) 
+    while (top != -1) {
+        if (peek() == '(') {
+            printf("Error: unbalanced brackets\n");
+            return 0;
+        }
         postfix[j++] = pop(); 
+    }
  
     postfix[j] = '\0'; 
+    return 1;
 } 
  
 int main() { 
     char infix[MAX], postfix[MAX]; 
  
     printf("Enter infix expression: "); 
-    scanf("%s", infix); 
+    if (scanf("%99s", infix) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
  
-    infixToPostfix(infix, postfix); 
- 
-    printf("Postfix expression: %s\n", postfix); 
+    if (infixToPostfix(infix, postfix)) 
+        printf("Postfix expression: %s\n", postfix); 
  
     return 0; 
 } 
@@ -1374,6 +1499,7 @@ void size() {
 int main()
 {
     int choice, n, i;
+    struct Node *temp;
 
     do
     {
@@ -1387,7 +1513,11 @@ int main()
         printf("7. Exit\n");
 
         printf("Enter your choice: ");
-        scanf("%d", &choice);
+        if (scanf("%d", &choice) != 1)
+        {
+            printf("Invalid input. Exiting...\n");
+            break;
+        }
 
         switch (choice)
         {
@@ -1434,6 +1564,13 @@ int main()
         }
 
     } while (choice != 7);
+
+    while (front != NULL)
+    {
+        temp = front;
+        front = front->next;
+        free(temp);
+    }
 
     return 0;
 }
@@ -2519,27 +2656,42 @@ void displayList(int n) {
         printf("NULL\n");
     }
 }
+void freeList(int n) {
+    int i;
+    struct Node *temp, *next;
+    for (i = 0; i < n; i++) {
+        temp = adjList[i];
+        while (temp != NULL) {
+            next = temp->next;
+            free(temp);
+            temp = next;
+        }
+        adjList[i] = NULL;
+    }
+}
 int main() {
     int n, e, u, v, i;
     printf("Enter number of vertices: ");
-    scanf("%d", &n);
-    if (n < 1 || n > MAX) {
+    if (scanf("%d", &n) != 1 || n < 1 || n > MAX) {
         printf("Invalid number of vertices.\n");
         return 1;
     }
     for (i = 0; i < n; i++)
         adjList[i] = NULL;
     printf("Enter number of edges: ");
-    scanf("%d", &e);
-    if (e < 0 || e > n * (n - 1) / 2) {
+    if (scanf("%d", &e) != 1 || e < 0 || e > n * (n - 1) / 2) {
         printf("Invalid number of edges.\n");
         return 1;
     }
     printf("Enter edges (u v), vertices numbered 0 to %d:\n", n - 1);
     for (i = 0; i < e; i++) {
-        scanf("%d%d", &u, &v);
-        if (u < 0 || u >= n || v < 0 || v >= n || u == v) {
-            printf("Invalid edge. Enter valid vertices.\n");
+        if (scanf("%d%d", &u, &v) != 2) {
+            printf("Invalid input.\n");
+            freeList(n);
+            return 1;
+        }
+        if (u < 0 || u >= n || v < 0 || v >= n || u == v || adjMatrix[u][v]) {
+            printf("Invalid or duplicate edge. Enter valid vertices.\n");
             i--;
             continue;
         }
@@ -2547,6 +2699,7 @@ int main() {
     }
     displayMatrix(n);
     displayList(n);
+    freeList(n);
     return 0;
 }
 ```
@@ -2559,17 +2712,34 @@ int main() {
     int adj[20][20] = {0}, visited[20] = {0}, queue[20];
     int n, e, i, u, v, start, front = 0, rear = 0;
     printf("Enter number of vertices: ");
-    scanf("%d", &n);
+    if (scanf("%d", &n) != 1 || n < 1 || n > 20) {
+        printf("Invalid number of vertices.\n");
+        return 1;
+    }
     printf("Enter number of edges: ");
-    scanf("%d", &e);
-    printf("Enter edges (u v):\n");
+    if (scanf("%d", &e) != 1 || e < 0 || e > n * (n - 1) / 2) {
+        printf("Invalid number of edges.\n");
+        return 1;
+    }
+    printf("Enter edges (u v), vertices numbered 0 to %d:\n", n - 1);
     for (i = 0; i < e; i++) {
-        scanf("%d%d", &u, &v);
+        if (scanf("%d%d", &u, &v) != 2) {
+            printf("Invalid input.\n");
+            return 1;
+        }
+        if (u < 0 || u >= n || v < 0 || v >= n || u == v || adj[u][v]) {
+            printf("Invalid or duplicate edge. Enter valid vertices.\n");
+            i--;
+            continue;
+        }
         adj[u][v] = 1;
         adj[v][u] = 1;   /* undirected graph */
     }
     printf("Enter starting vertex: ");
-    scanf("%d", &start);
+    if (scanf("%d", &start) != 1 || start < 0 || start >= n) {
+        printf("Invalid starting vertex.\n");
+        return 1;
+    }
     visited[start] = 1;
     queue[rear++] = start;   /* enqueue start */
     printf("BFS Traversal: ");
@@ -2605,17 +2775,34 @@ void dfs(int u) {
 int main() {
     int e, i, u, v, start;
     printf("Enter number of vertices: ");
-    scanf("%d", &n);
+    if (scanf("%d", &n) != 1 || n < 1 || n > 20) {
+        printf("Invalid number of vertices.\n");
+        return 1;
+    }
     printf("Enter number of edges: ");
-    scanf("%d", &e);
-    printf("Enter edges (u v):\n");
+    if (scanf("%d", &e) != 1 || e < 0 || e > n * (n - 1) / 2) {
+        printf("Invalid number of edges.\n");
+        return 1;
+    }
+    printf("Enter edges (u v), vertices numbered 0 to %d:\n", n - 1);
     for (i = 0; i < e; i++) {
-        scanf("%d%d", &u, &v);
+        if (scanf("%d%d", &u, &v) != 2) {
+            printf("Invalid input.\n");
+            return 1;
+        }
+        if (u < 0 || u >= n || v < 0 || v >= n || u == v || adj[u][v]) {
+            printf("Invalid or duplicate edge. Enter valid vertices.\n");
+            i--;
+            continue;
+        }
         adj[u][v] = 1;
         adj[v][u] = 1;   /* undirected graph */
     }
     printf("Enter starting vertex: ");
-    scanf("%d", &start);
+    if (scanf("%d", &start) != 1 || start < 0 || start >= n) {
+        printf("Invalid starting vertex.\n");
+        return 1;
+    }
     printf("DFS Traversal: ");
     dfs(start);
     printf("\n");
@@ -2628,20 +2815,34 @@ ASSIGNMENT 17: PRIM'S ALGORITHM (MST)
 ```
 #include <stdio.h>
 #define MAX 20
-#define INF 9999
+#define INF 1000000000
 int main() {
     int g[MAX][MAX], key[MAX], parent[MAX], selected[MAX] = {0};
     int n, e, i, j, u, v, w, count, total = 0;
     printf("Enter number of vertices: ");
-    scanf("%d", &n);
+    if (scanf("%d", &n) != 1 || n < 1 || n > MAX) {
+        printf("Invalid number of vertices.\n");
+        return 1;
+    }
     printf("Enter number of edges: ");
-    scanf("%d", &e);
+    if (scanf("%d", &e) != 1 || e < 0) {
+        printf("Invalid number of edges.\n");
+        return 1;
+    }
     for (i = 0; i < n; i++)
         for (j = 0; j < n; j++)
-            g[i][j] = 0;   /* 0 means no edge */
-    printf("Enter edges (u v weight):\n");
+            g[i][j] = INF;   /* INF means no edge, so zero-weight edges work */
+    printf("Enter edges (u v weight), vertices numbered 0 to %d:\n", n - 1);
     for (i = 0; i < e; i++) {
-        scanf("%d%d%d", &u, &v, &w);
+        if (scanf("%d%d%d", &u, &v, &w) != 3) {
+            printf("Invalid input.\n");
+            return 1;
+        }
+        if (u < 0 || u >= n || v < 0 || v >= n || u == v || w < 0 || w >= INF) {
+            printf("Invalid edge. Enter valid vertices and a non-negative weight.\n");
+            i--;
+            continue;
+        }
         g[u][v] = w;
         g[v][u] = w;
     }
@@ -2664,7 +2865,7 @@ int main() {
             total += key[u];
         }
         for (v = 0; v < n; v++)
-            if (g[u][v] && !selected[v] && g[u][v] < key[v]) {
+            if (g[u][v] != INF && !selected[v] && g[u][v] < key[v]) {
                 key[v] = g[u][v];
                 parent[v] = u;
             }
@@ -2679,34 +2880,54 @@ ASSIGNMENT 18: FLOYD-WARSHALL ALGORITHM
 ```
 #include <stdio.h>
 #define MAX 20
-#define INF 99999
+#define INF 1000000000
 int main() {
-    int d[MAX][MAX], n, e, i, j, k, u, v, w;
+    long long d[MAX][MAX];
+    int n, e, i, j, k, u, v, w;
     printf("Enter number of vertices: ");
-    scanf("%d", &n);
+    if (scanf("%d", &n) != 1 || n < 1 || n > MAX) {
+        printf("Invalid number of vertices.\n");
+        return 1;
+    }
     printf("Enter number of edges: ");
-    scanf("%d", &e);
+    if (scanf("%d", &e) != 1 || e < 0) {
+        printf("Invalid number of edges.\n");
+        return 1;
+    }
     for (i = 0; i < n; i++)
         for (j = 0; j < n; j++)
             d[i][j] = (i == j) ? 0 : INF;
-    printf("Enter edges (u v weight):\n");
+    printf("Enter edges (u v weight), vertices numbered 0 to %d:\n", n - 1);
     for (i = 0; i < e; i++) {
-        scanf("%d %d %d", &u, &v, &w);
-        d[u][v] = w;
+        if (scanf("%d %d %d", &u, &v, &w) != 3) {
+            printf("Invalid input.\n");
+            return 1;
+        }
+        if (u < 0 || u >= n || v < 0 || v >= n) {
+            printf("Invalid edge. Enter valid vertices.\n");
+            i--;
+            continue;
+        }
+        if (u == v && w >= 0)
+            continue;   /* non-negative self-loop never helps */
+        if (w < d[u][v])
+            d[u][v] = w;   /* keep the smaller weight for parallel edges */
     }
     for (k = 0; k < n; k++)
         for (i = 0; i < n; i++)
             for (j = 0; j < n; j++)
                 if (d[i][k] != INF && d[k][j] != INF &&
-                    d[i][k] + d[k][j] < d[i][j])
+                    d[i][k] + d[k][j] < d[i][j]) {
                     d[i][j] = d[i][k] + d[k][j];
+                    if (d[i][j] < -INF) d[i][j] = -INF;   /* avoid overflow */
+                }
     printf("\nAll-pairs shortest distance matrix:\n");
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
-            if (d[i][j] == INF)
+            if (d[i][j] >= INF)
                 printf("%5s", "INF");
             else
-                printf("%5d", d[i][j]);
+                printf("%5lld", d[i][j]);
         }
         printf("\n");
     }
@@ -2728,8 +2949,21 @@ ASSIGNMENT 19: HASH TABLE USING LINEAR PROBING
 #define MAX 50
 int table[MAX], size;
 int hash(int key) { return key % size; }
+int find(int key) {
+    int i, idx = hash(key);
+    for (i = 0; i < size; i++) {
+        int pos = (idx + i) % size;
+        if (table[pos] == key) return pos;
+        if (table[pos] == EMPTY) break;
+    }
+    return -1;
+}
 void insert(int key) {
     int i, idx = hash(key);
+    if (find(key) >= 0) {
+        printf("Duplicate key %d ignored.\n", key);
+        return;
+    }
     for (i = 0; i < size; i++) {
         int pos = (idx + i) % size;   /* wrap around */
         if (table[pos] == EMPTY) {
@@ -2741,13 +2975,9 @@ void insert(int key) {
     printf("Table is full. Cannot insert %d\n", key);
 }
 void search(int key) {
-    int i, idx = hash(key);
-    for (i = 0; i < size; i++) {
-        int pos = (idx + i) % size;
-        if (table[pos] == key) { printf("Key %d found at index %d\n", key, pos); return; }
-        if (table[pos] == EMPTY) break;
-    }
-    printf("Key %d not found\n", key);
+    int pos = find(key);
+    if (pos >= 0) printf("Key %d found at index %d\n", key, pos);
+    else printf("Key %d not found\n", key);
 }
 void display() {
     int i;
@@ -2759,19 +2989,36 @@ void display() {
 }
 int main() {
     int n, i, key;
-    printf("Enter hash table size: ");
-    scanf("%d", &size);
+    printf("Enter hash table size (1-%d): ", MAX);
+    if (scanf("%d", &size) != 1 || size < 1 || size > MAX) {
+        printf("Invalid table size.\n");
+        return 1;
+    }
     for (i = 0; i < size; i++) table[i] = EMPTY;
     printf("Enter number of keys: ");
-    scanf("%d", &n);
-    printf("Enter the keys:\n");
+    if (scanf("%d", &n) != 1 || n < 0) {
+        printf("Invalid number of keys.\n");
+        return 1;
+    }
+    printf("Enter the keys (non-negative integers):\n");
     for (i = 0; i < n; i++) {
-        scanf("%d", &key);
+        if (scanf("%d", &key) != 1) {
+            printf("Invalid input.\n");
+            return 1;
+        }
+        if (key < 0) {
+            printf("Invalid key. Use non-negative integers.\n");
+            i--;
+            continue;
+        }
         insert(key);
     }
     display();
     printf("\nEnter key to search: ");
-    scanf("%d", &key);
+    if (scanf("%d", &key) != 1 || key < 0) {
+        printf("Invalid key.\n");
+        return 1;
+    }
     search(key);
     return 0;
 }
@@ -2945,6 +3192,268 @@ int main(void) {
         }
     } while (choice != 5);
     freeTable();
+    return 0;
+}
+```
+============================================================
+21. HEAP (MAX HEAP)
+============================================================
+```
+#include <stdio.h>
+
+#define MAX 100
+
+int heap[MAX + 1];   /* 1-indexed: parent of i is i/2, children are 2i and 2i+1 */
+int n = 0;
+
+void swap(int *x, int *y) {
+    int temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+void heapifyDown(int i) {
+    int largest, l, r;
+
+    while (1) {
+        largest = i;
+        l = 2 * i;
+        r = 2 * i + 1;
+
+        if (l <= n && heap[l] > heap[largest])
+            largest = l;
+
+        if (r <= n && heap[r] > heap[largest])
+            largest = r;
+
+        if (largest == i)
+            break;
+
+        swap(&heap[i], &heap[largest]);
+        i = largest;
+    }
+}
+
+void insert()
+{
+    int value, i;
+
+    if (n == MAX)
+    {
+        printf("Heap Overflow.\n");
+        return;
+    }
+
+    printf("Enter value: ");
+    scanf("%d", &value);
+
+    n++;
+    heap[n] = value;
+    i = n;
+
+    while (i > 1 && heap[i / 2] < heap[i])
+    {
+        swap(&heap[i / 2], &heap[i]);
+        i = i / 2;
+    }
+
+    printf("Element inserted successfully.\n");
+}
+
+void deleteMax()
+{
+    if (n == 0)
+    {
+        printf("Heap Underflow.\n");
+        return;
+    }
+
+    printf("Deleted maximum element: %d\n", heap[1]);
+
+    heap[1] = heap[n];
+    n--;
+
+    heapifyDown(1);
+}
+
+void peek()
+{
+    if (n == 0)
+    {
+        printf("Heap is empty.\n");
+        return;
+    }
+
+    printf("Maximum element: %d\n", heap[1]);
+}
+
+void display()
+{
+    int i;
+
+    if (n == 0)
+    {
+        printf("Heap is empty.\n");
+        return;
+    }
+
+    printf("Heap elements (array order): ");
+
+    for (i = 1; i <= n; i++)
+        printf("%d ", heap[i]);
+
+    printf("\n");
+}
+
+void search() {
+    int value, i;
+
+    printf("Enter value to search: ");
+    scanf("%d", &value);
+
+    for (i = 1; i <= n; i++) {
+        if (heap[i] == value) {
+            printf("%d found at index %d.\n", value, i);
+            return;
+        }
+    }
+    printf("%d not found in the heap.\n", value);
+}
+
+void size() {
+    printf("Number of elements = %d\n", n);
+}
+
+int main()
+{
+    int choice, k, i;
+
+    do
+    {
+        printf("\nMAX HEAP\n");
+        printf("1. Insert\n");
+        printf("2. Delete maximum\n");
+        printf("3. Peek\n");
+        printf("4. Display\n");
+        printf("5. Search\n");
+        printf("6. Size\n");
+        printf("7. Exit\n");
+
+        printf("Enter your choice: ");
+        if (scanf("%d", &choice) != 1)
+        {
+            printf("Invalid input. Exiting...\n");
+            break;
+        }
+
+        switch (choice)
+        {
+            case 1:
+                printf("Enter number of elements to insert: ");
+                scanf("%d", &k);
+
+                for (i = 0; i < k; i++)
+                {
+                    printf("\nElement %d:\n", i + 1);
+                    insert();
+                }
+
+                printf("\n");
+                display();
+                break;
+
+            case 2:
+                deleteMax();
+                break;
+
+            case 3:
+                peek();
+                break;
+
+            case 4:
+                display();
+                break;
+
+            case 5:
+                search();
+                break;
+
+            case 6:
+                size();
+                break;
+
+            case 7:
+                printf("Exiting...\n");
+                break;
+
+            default:
+                printf("Invalid choice.\n");
+        }
+
+    } while (choice != 7);
+
+    return 0;
+}
+```
+============================================================
+22. HEAP SORT
+============================================================
+```
+#include <stdio.h>
+
+void heapify(int a[], int n, int i) {
+    int largest = i, l = 2 * i + 1, r = 2 * i + 2, temp;
+
+    if (l < n && a[l] > a[largest])
+        largest = l;
+
+    if (r < n && a[r] > a[largest])
+        largest = r;
+
+    if (largest != i) {
+        temp = a[i];
+        a[i] = a[largest];
+        a[largest] = temp;
+
+        heapify(a, n, largest);
+    }
+}
+
+void heapSort(int a[], int n) {
+    int i, temp;
+
+    for (i = n / 2 - 1; i >= 0; i--)
+        heapify(a, n, i);
+
+    for (i = n - 1; i > 0; i--) {
+        temp = a[0];
+        a[0] = a[i];
+        a[i] = temp;
+
+        heapify(a, i, 0);
+    }
+}
+
+int main() {
+    int a[100], n, i;
+
+    printf("Enter number of elements: ");
+    if (scanf("%d", &n) != 1 || n < 1 || n > 100) {
+        printf("Invalid number of elements (1-100)\n");
+        return 1;
+    }
+
+    printf("Enter elements:\n");
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    heapSort(a, n);
+
+    printf("Sorted array: ");
+    for (i = 0; i < n; i++)
+        printf("%d ", a[i]);
+
+    printf("\n");
     return 0;
 }
 ```
